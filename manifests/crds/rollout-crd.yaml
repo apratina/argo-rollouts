@@ -529,6 +529,19 @@ spec:
                           required:
                           - stableIngress
                           type: object
+                        kapcom:
+                          properties:
+                            additionalIngressAnnotations:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            annotationPrefix:
+                              type: string
+                            stableIngress:
+                              type: string
+                          required:
+                          - stableIngress
+                          type: object
                         smi:
                           properties:
                             rootService:

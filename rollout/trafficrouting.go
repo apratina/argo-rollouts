@@ -8,6 +8,7 @@ import (
 	"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1"
 	"github.com/argoproj/argo-rollouts/rollout/trafficrouting/alb"
 	"github.com/argoproj/argo-rollouts/rollout/trafficrouting/istio"
+	"github.com/argoproj/argo-rollouts/rollout/trafficrouting/kapcom"
 	"github.com/argoproj/argo-rollouts/rollout/trafficrouting/nginx"
 	"github.com/argoproj/argo-rollouts/rollout/trafficrouting/smi"
 
@@ -43,6 +44,15 @@ func (c *Controller) NewTrafficRoutingReconciler(roCtx *rolloutContext) (Traffic
 		return nginx.NewReconciler(nginx.ReconcilerConfig{
 			Rollout:        rollout,
 			Client:         c.kubeclientset,
+			Recorder:       c.recorder,
+			ControllerKind: controllerKind,
+			IngressLister:  c.ingressesLister,
+		}), nil
+	}
+	if rollout.Spec.Strategy.Canary.TrafficRouting.Kapcom != nil {
+		return kapcom.NewReconciler(kapcom.ReconcilerConfig{
+			Rollout:        rollout,
+			Client:         c.argoprojclientset,
 			Recorder:       c.recorder,
 			ControllerKind: controllerKind,
 			IngressLister:  c.ingressesLister,

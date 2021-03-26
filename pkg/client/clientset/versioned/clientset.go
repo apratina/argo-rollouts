@@ -21,6 +21,7 @@ package versioned
 import (
 	"fmt"
 
+	kapcomv1beta1 "github.com/argoproj/argo-rollouts/pkg/client/clientset/versioned/typed/kapcom/v1beta1"
 	argoprojv1alpha1 "github.com/argoproj/argo-rollouts/pkg/client/clientset/versioned/typed/rollouts/v1alpha1"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
@@ -30,6 +31,7 @@ import (
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
 	ArgoprojV1alpha1() argoprojv1alpha1.ArgoprojV1alpha1Interface
+	KapcomV1beta1() kapcomv1beta1.KapcomV1beta1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
@@ -37,11 +39,17 @@ type Interface interface {
 type Clientset struct {
 	*discovery.DiscoveryClient
 	argoprojV1alpha1 *argoprojv1alpha1.ArgoprojV1alpha1Client
+	kapcomV1beta1    *kapcomv1beta1.KapcomV1beta1Client
 }
 
 // ArgoprojV1alpha1 retrieves the ArgoprojV1alpha1Client
 func (c *Clientset) ArgoprojV1alpha1() argoprojv1alpha1.ArgoprojV1alpha1Interface {
 	return c.argoprojV1alpha1
+}
+
+// KapcomV1beta1 retrieves the KapcomV1beta1Client
+func (c *Clientset) KapcomV1beta1() kapcomv1beta1.KapcomV1beta1Interface {
+	return c.kapcomV1beta1
 }
 
 // Discovery retrieves the DiscoveryClient
@@ -70,6 +78,11 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 		return nil, err
 	}
 
+	cs.kapcomV1beta1, err = kapcomv1beta1.NewForConfig(&configShallowCopy)
+	if err != nil {
+		return nil, err
+	}
+
 	cs.DiscoveryClient, err = discovery.NewDiscoveryClientForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
@@ -83,6 +96,8 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 	var cs Clientset
 	cs.argoprojV1alpha1 = argoprojv1alpha1.NewForConfigOrDie(c)
 
+	cs.kapcomV1beta1 = kapcomv1beta1.NewForConfigOrDie(c)
+
 	cs.DiscoveryClient = discovery.NewDiscoveryClientForConfigOrDie(c)
 	return &cs
 }
@@ -91,6 +106,8 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
 	cs.argoprojV1alpha1 = argoprojv1alpha1.New(c)
+
+	cs.kapcomV1beta1 = kapcomv1beta1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)
 	return &cs

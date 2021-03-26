@@ -14836,6 +14836,19 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - contour.heptio.com
+  resources:
+  - ingressroutes
+  - ingressroutes/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -14866,6 +14879,19 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - contour.heptio.com
+  resources:
+  - ingressroutes
+  - ingressroutes/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -14890,6 +14916,19 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - contour.heptio.com
+  resources:
+  - ingressroutes
+  - ingressroutes/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -15030,6 +15069,19 @@ rules:
   - get
   - update
   - patch
+- apiGroups:
+  - contour.heptio.com
+  resources:
+  - ingressroutes
+  - ingressroutes/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -15085,7 +15137,8 @@ spec:
         app.kubernetes.io/name: argo-rollouts
     spec:
       containers:
-      - image: argoproj/argo-rollouts:latest
+      - image: akspra676568828/argo-rollouts:0.0.1
+        # image: argoproj/argo-rollouts:latest
         imagePullPolicy: Always
         name: argo-rollouts
       securityContext:

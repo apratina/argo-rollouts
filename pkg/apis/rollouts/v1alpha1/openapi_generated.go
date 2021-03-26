@@ -70,6 +70,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.MetricResult":                                    schema_pkg_apis_rollouts_v1alpha1_MetricResult(ref),
 		"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.NewRelicMetric":                                  schema_pkg_apis_rollouts_v1alpha1_NewRelicMetric(ref),
 		"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.NginxTrafficRouting":                             schema_pkg_apis_rollouts_v1alpha1_NginxTrafficRouting(ref),
+		"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.KapcomTrafficRouting":                            schema_pkg_apis_rollouts_v1alpha1_KapcomTrafficRouting(ref),
 		"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.PauseCondition":                                  schema_pkg_apis_rollouts_v1alpha1_PauseCondition(ref),
 		"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.PodTemplateMetadata":                             schema_pkg_apis_rollouts_v1alpha1_PodTemplateMetadata(ref),
 		"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.PreferredDuringSchedulingIgnoredDuringExecution": schema_pkg_apis_rollouts_v1alpha1_PreferredDuringSchedulingIgnoredDuringExecution(ref),
@@ -2156,6 +2157,50 @@ func schema_pkg_apis_rollouts_v1alpha1_NginxTrafficRouting(ref common.ReferenceC
 	}
 }
 
+func schema_pkg_apis_rollouts_v1alpha1_KapcomTrafficRouting(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KapcomTrafficRouting configuration for Kapcom ingress controller to control traffic routing",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"annotationPrefix": {
+						SchemaProps: spec.SchemaProps{
+							Description: "AnnotationPrefix has to match the configured annotation prefix on the kapcom ingress controller",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"stableIngress": {
+						SchemaProps: spec.SchemaProps{
+							Description: "StableIngress refers to the name of an `Ingress` resource in the same namespace as the `Rollout`",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"additionalIngressAnnotations": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"stableIngress"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_rollouts_v1alpha1_PauseCondition(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -3110,6 +3155,12 @@ func schema_pkg_apis_rollouts_v1alpha1_RolloutTrafficRouting(ref common.Referenc
 							Ref:         ref("github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.NginxTrafficRouting"),
 						},
 					},
+					"kapcom": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kapcom holds Kapcom Ingress specific configuration to route traffic",
+							Ref:         ref("github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.KapcomTrafficRouting"),
+						},
+					},
 					"alb": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Nginx holds ALB Ingress specific configuration to route traffic",
@@ -3126,7 +3177,7 @@ func schema_pkg_apis_rollouts_v1alpha1_RolloutTrafficRouting(ref common.Referenc
 			},
 		},
 		Dependencies: []string{
-			"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.ALBTrafficRouting", "github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.IstioTrafficRouting", "github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.NginxTrafficRouting", "github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.SMITrafficRouting"},
+			"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.ALBTrafficRouting", "github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.IstioTrafficRouting", "github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.NginxTrafficRouting", "github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.KapcomTrafficRouting", "github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1.SMITrafficRouting"},
 	}
 }
 

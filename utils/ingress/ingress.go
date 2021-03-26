@@ -59,6 +59,18 @@ func GetRolloutIngressKeys(rollout *v1alpha1.Rollout) []string {
 	}
 	if rollout.Spec.Strategy.Canary != nil &&
 		rollout.Spec.Strategy.Canary.TrafficRouting != nil &&
+		rollout.Spec.Strategy.Canary.TrafficRouting.Kapcom != nil &&
+		rollout.Spec.Strategy.Canary.TrafficRouting.Kapcom.StableIngress != "" {
+
+		// Also start watcher for `-canary` ingress which is created by the trafficmanagement controller
+		ingresses = append(
+			ingresses,
+			fmt.Sprintf("%s/%s", rollout.Namespace, rollout.Spec.Strategy.Canary.TrafficRouting.Kapcom.StableIngress),
+			fmt.Sprintf("%s/%s", rollout.Namespace, GetCanaryIngressName(rollout)),
+		)
+	}
+	if rollout.Spec.Strategy.Canary != nil &&
+		rollout.Spec.Strategy.Canary.TrafficRouting != nil &&
 		rollout.Spec.Strategy.Canary.TrafficRouting.ALB != nil &&
 		rollout.Spec.Strategy.Canary.TrafficRouting.ALB.Ingress != "" {
 		ingresses = append(
@@ -84,7 +96,20 @@ func GetCanaryIngressName(rollout *v1alpha1.Rollout) string {
 			prefix = prefix[0 : 253-len(CanaryIngressSuffix)]
 		}
 		return fmt.Sprintf("%s%s", prefix, CanaryIngressSuffix)
+
+	} else if rollout.Spec.Strategy.Canary != nil &&
+		rollout.Spec.Strategy.Canary.TrafficRouting != nil &&
+		rollout.Spec.Strategy.Canary.TrafficRouting.Kapcom != nil &&
+		rollout.Spec.Strategy.Canary.TrafficRouting.Kapcom.StableIngress != "" {
+
+		prefix := fmt.Sprintf("%s-%s", rollout.GetName(), rollout.Spec.Strategy.Canary.TrafficRouting.Kapcom.StableIngress)
+		if len(prefix) > 253-len(CanaryIngressSuffix) {
+			// trim prefix
+			prefix = prefix[0 : 253-len(CanaryIngressSuffix)]
+		}
+		return fmt.Sprintf("%s%s", prefix, CanaryIngressSuffix)
 	}
+
 	return ""
 }
 

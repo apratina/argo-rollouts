@@ -226,6 +226,8 @@ type RolloutTrafficRouting struct {
 	Istio *IstioTrafficRouting `json:"istio,omitempty"`
 	// Nginx holds Nginx Ingress specific configuration to route traffic
 	Nginx *NginxTrafficRouting `json:"nginx,omitempty"`
+	// Kapcom holds Kapcom Ingress specific configuration to route traffic
+	Kapcom *KapcomTrafficRouting `json:"kapcom,omitempty"`
 	// Nginx holds ALB Ingress specific configuration to route traffic
 	ALB *ALBTrafficRouting `json:"alb,omitempty"`
 	// SMI holds TrafficSplit specific configuration to route traffic
@@ -244,6 +246,17 @@ type SMITrafficRouting struct {
 
 // NginxTrafficRouting configuration for Nginx ingress controller to control traffic routing
 type NginxTrafficRouting struct {
+	// AnnotationPrefix has to match the configured annotation prefix on the nginx ingress controller
+	// +optional
+	AnnotationPrefix string `json:"annotationPrefix,omitempty"`
+	// StableIngress refers to the name of an `Ingress` resource in the same namespace as the `Rollout`
+	StableIngress string `json:"stableIngress"`
+	// +optional
+	AdditionalIngressAnnotations map[string]string `json:"additionalIngressAnnotations,omitempty"`
+}
+
+// KapcomTrafficRouting configuration for Nginx ingress controller to control traffic routing
+type KapcomTrafficRouting struct {
 	// AnnotationPrefix has to match the configured annotation prefix on the nginx ingress controller
 	// +optional
 	AnnotationPrefix string `json:"annotationPrefix,omitempty"`

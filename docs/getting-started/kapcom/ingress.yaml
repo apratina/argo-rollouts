@@ -1,0 +1,16 @@
+apiVersion: contour.heptio.com/v1beta1
+kind: IngressRoute
+metadata:
+  name: rollouts-demo-stable
+  annotations:
+    kubernetes.io/ingress.class: contour-corp
+spec:
+  virtualhost:
+    fqdn: apratina-argo-rollout.sandbox.cloud.adobe.io
+    tls:
+      secretName: heptio-contour/cluster-ssl-alternate
+  routes:
+    - delegate:
+        name: rollouts-demo
+        namespace: default
+      match: /
